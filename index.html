@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpikeWatch — VALORANT Champions Shanghai 2026</title>
+<meta name="description" content="VALORANT Champions Shanghai 2026 için canlı skorlar, maç takvimi, tahmin ligi ve haberler.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230B0E14%22/><path d=%22M50 12 L82 35 V65 L50 88 L18 65 V35 Z%22 fill=%22none%22 stroke=%22%23FF3B5C%22 stroke-width=%226%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="noise-layer" aria-hidden="true"></div>
+
+<!-- ===== NAV ===== -->
+<header class="site-header" id="top">
+  <div class="wrap header-inner">
+    <a href="#top" class="logo">
+      <svg class="logo-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 8 L86 32 V68 L50 92 L14 68 V32 Z"/></svg>
+      <span class="logo-text">SPIKE<em>WATCH</em></span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="#maclar">Maçlar</a>
+      <a href="#tahmin">Tahmin Ligi</a>
+      <a href="#takimlar">Takımlar</a>
+      <a href="#haberler">Haberler</a>
+      <a href="#izle">Nasıl İzlenir</a>
+      <a href="#siralama">Sıralama</a>
+    </nav>
+    <div class="header-actions">
+      <span class="user-chip" id="userChip" hidden>
+        <span class="user-chip-name" id="userChipName"></span>
+        <span class="user-chip-pts" id="userChipPts"></span>
+        <button class="btn-ghost btn-tiny" id="logoutBtn" type="button">Çıkış</button>
+      </span>
+      <button class="btn-outline" id="openLogin" type="button">Giriş yap</button>
+      <button class="btn-solid" id="openRegister" type="button">Kayıt ol</button>
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Menü" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <p class="hero-kicker">VALORANT Champions Tour 2026 — Dünya Şampiyonası</p>
+      <h1>Şangay'daki her round burada.<br>Skor, tahmin, ödül — tek ekranda.</h1>
+      <p class="hero-sub">16 takım, tek kupa. Grup aşamasından finale kadar tüm maçları canlı takip et, sonucu tahmin et, puan topla — turnuva bitiminde sıralaman belli olsun.</p>
+      <div class="hero-cta">
+        <a href="#maclar" class="btn-solid btn-lg">Maçlara Git</a>
+        <a href="#tahmin" class="btn-outline btn-lg">Tahmin Yap</a>
+      </div>
+    </div>
+    <div class="hero-panel" id="heroPanel">
+      <div class="panel-label">Sıradaki Maç</div>
+      <div id="nextMatchBox" class="next-match"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LIVE TICKER ===== -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track" id="tickerTrack"></div>
+</div>
+
+<!-- ===== MATCHES ===== -->
+<section class="section" id="maclar">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Maçlar &amp; Skorlar</h2>
+      <p>VALORANT Champions Shanghai — Grup Aşaması. Skorlar maç sırasında saniyesine güncellenir.</p>
+    </div>
+    <div class="filter-row" id="matchFilters">
+      <button class="chip active" data-filter="all">Tümü</button>
+      <button class="chip" data-filter="live">🔴 Canlı</button>
+      <button class="chip" data-filter="upcoming">Yaklaşan</button>
+      <button class="chip" data-filter="finished">Tamamlanan</button>
+    </div>
+    <div class="match-grid" id="matchGrid"></div>
+    <button class="btn-outline demo-btn" id="demoLiveBtn" type="button">▶ Canlı skor simülasyonunu göster (demo)</button>
+    <p class="fine-print">Not: Champions Shanghai 24 Eylül'de başlıyor. Gerçek saniyelik skor akışı için resmi bir maç verisi API'sine (örn. Riot'un esports verileri) bağlanman gerekir — bu site o bağlantıyı takacağın bir yer bırakıyor (<code>script.js</code> içindeki <code>fetchLiveScore()</code>). Butona basarak akışın demoda nasıl göründüğünü izleyebilirsin.</p>
+  </div>
+</section>
+
+<!-- ===== PREDICTIONS ===== -->
+<section class="section section-alt" id="tahmin">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Tahmin Ligi</h2>
+      <p>Her maçtan önce kazananı seç. Doğru tahmin puan kazandırır, turnuva sonunda en yüksek puan zirveye çıkar.</p>
+    </div>
+    <div id="predictionAuthGate" class="auth-gate" hidden>
+      Tahmin yapabilmek için önce <button class="link-btn" id="gateLoginBtn" type="button">giriş yap</button> ya da <button class="link-btn" id="gateRegisterBtn" type="button">kayıt ol</button>.
+    </div>
+    <div class="predict-grid" id="predictGrid"></div>
+    <div class="scoring-note">
+      <strong>Puanlama:</strong> Doğru kazanan tahmini +10 puan · Skoru birebir tutturursan +5 bonus puan · Turnuva bitiminde en çok puanı toplayan zirvede.
+    </div>
+  </div>
+</section>
+
+<!-- ===== TEAMS ===== -->
+<section class="section" id="takimlar">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Takımlar</h2>
+      <p>Champions Shanghai 2026'ya katılan 16 takım. Kadro ve koç bilgisi için bir karta dokun.</p>
+    </div>
+    <div class="team-grid" id="teamGrid"></div>
+  </div>
+</section>
+
+<!-- ===== NEWS ===== -->
+<section class="section section-alt" id="haberler">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>VALORANT Haberleri</h2>
+      <p>Turnuva ve VCT ekosistemiyle ilgili son gelişmeler.</p>
+    </div>
+    <div class="news-grid" id="newsGrid"></div>
+  </div>
+</section>
+
+<!-- ===== WATCH ===== -->
+<section class="section" id="izle">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Nasıl İzlenir</h2>
+      <p>Maçları resmi kaynaklardan canlı izleyebilirsin.</p>
+    </div>
+    <div class="watch-grid">
+      <a class="watch-card" href="https://www.twitch.tv/valorant" target="_blank" rel="noopener">
+        <span class="watch-plat">Twitch</span>
+        <span class="watch-desc">Resmi VALORANT Esports kanalı — İngilizce ana yayın</span>
+      </a>
+      <a class="watch-card" href="https://www.youtube.com/@VALORANTEsports" target="_blank" rel="noopener">
+        <span class="watch-plat">YouTube</span>
+        <span class="watch-desc">VALORANT Esports resmi kanalı — VOD ve canlı yayın</span>
+      </a>
+      <a class="watch-card" href="https://valorantesports.com" target="_blank" rel="noopener">
+        <span class="watch-plat">valorantesports.com</span>
+        <span class="watch-desc">Resmi puan durumu, takvim ve maç sayfaları</span>
+      </a>
+      <a class="watch-card" href="https://www.twitch.tv/directory/game/VALORANT" target="_blank" rel="noopener">
+        <span class="watch-plat">Topluluk Yayınları</span>
+        <span class="watch-desc">Türkçe ve diğer dillerde yayın yapan içerik üreticileri</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LEADERBOARD ===== -->
+<section class="section section-alt" id="siralama">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Tahmin Sıralaması</h2>
+      <p>Bu tarayıcıda kayıtlı hesapların puan sıralaması.</p>
+    </div>
+    <div class="leaderboard" id="leaderboard"></div>
+    <p class="fine-print">Not: Bu sıralama, cihazında (localStorage) tutulan hesaplardan üretilir. Sıralamanın herkes için ortak ve cihazlar arası çalışması için gerçek bir sunucu + veritabanı (örn. Firebase, Supabase ya da kendi backend'in) gerekir.</p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div>
+      <span class="logo-text small">SPIKE<em>WATCH</em></span>
+      <p>Resmi olmayan, hayran yapımı bir VALORANT Champions takip sitesi. VALORANT, Riot Games, Inc.'in ticari markasıdır.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#maclar">Maçlar</a>
+      <a href="#tahmin">Tahmin Ligi</a>
+      <a href="#takimlar">Takımlar</a>
+      <a href="#izle">Nasıl İzlenir</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== AUTH MODAL ===== -->
+<div class="modal-backdrop" id="modalBackdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true">
+    <button class="modal-close" id="modalClose" type="button" aria-label="Kapat">&times;</button>
+
+    <div id="loginPane" class="auth-pane">
+      <h3>Giriş yap</h3>
+      <form id="loginForm">
+        <label>Kullanıcı adı
+          <input type="text" id="loginUser" autocomplete="username" required>
+        </label>
+        <label>Şifre
+          <input type="password" id="loginPass" autocomplete="current-password" required>
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" id="rememberMe" checked>
+          <span>Beni hatırla</span>
+        </label>
+        <p class="form-error" id="loginError" hidden></p>
+        <button class="btn-solid btn-block" type="submit">Giriş yap</button>
+      </form>
+      <p class="switch-line">Hesabın yok mu? <button class="link-btn" id="switchToRegister" type="button">Kayıt ol</button></p>
+    </div>
+
+    <div id="registerPane" class="auth-pane" hidden>
+      <h3>Kayıt ol</h3>
+      <form id="registerForm">
+        <label>Kullanıcı adı
+          <input type="text" id="regUser" autocomplete="username" required minlength="3">
+        </label>
+        <label>Şifre
+          <input type="password" id="regPass" autocomplete="new-password" required minlength="4">
+        </label>
+        <label>Favori takım
+          <select id="regTeam"></select>
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" id="rememberMeReg" checked>
+          <span>Beni hatırla</span>
+        </label>
+        <p class="form-error" id="registerError" hidden></p>
+        <button class="btn-solid btn-block" type="submit">Hesap oluştur</button>
+      </form>
+      <p class="switch-line">Zaten hesabın var mı? <button class="link-btn" id="switchToLogin" type="button">Giriş yap</button></p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TEAM MODAL ===== -->
+<div class="modal-backdrop" id="teamModalBackdrop" hidden>
+  <div class="modal modal-wide" role="dialog" aria-modal="true">
+    <button class="modal-close" id="teamModalClose" type="button" aria-label="Kapat">&times;</button>
+    <div id="teamModalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="script.js"></script>
+</body>
+</html>
